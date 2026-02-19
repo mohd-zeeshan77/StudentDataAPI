@@ -49,6 +49,34 @@ namespace WebAppStudent.Services
                 student.CreatedOn, 
                 student.IsActive);
         }
+        public IEnumerable<StudentDto> GetInActiveStudent()
+        {
+            return _dbContext.Student
+                .Where(s => !s.IsActive)
+                .Select(s => new StudentDto(s.Id,
+                                            s.Name,
+                                            s.Gender,
+                                            s.DateOfBirth,
+                                            s.Contact,
+                                            s.Email,
+                                            s.Address,
+                                            s.CreatedOn,
+                                            s.IsActive))
+                .ToList(); ;
+        }
+
+        public IEnumerable<StudentMarksDto> GetStudentMarks()
+        {
+            return _dbContext.Marks
+                .Join(_dbContext.Student, m => m.StudentId, s => s.Id, (m, s) => new { m, s })
+                .Join(_dbContext.Subjects, ms => ms.m.SubjectId, sb => sb.Id, (ms, sb) => new StudentMarksDto(
+                    ms.s.Id,
+                    ms.s.Name,
+                    sb.Name,
+                    ms.m.MarksObtained
+                    ))
+                .ToList();
+        }
         public StudentDto? CreateStudent(CreateStudentRequest request)
         {
             try

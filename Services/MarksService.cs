@@ -69,6 +69,7 @@ namespace WebAppStudent.Services
                 {
                     return null;
                 }
+                if (std.IsActive) return null;
                 return _dbContext.Marks
                     .Where(m=>m.SubjectId == SubjectId && m.StudentId ==StudentId)
                     .Select(m => new MarksDto(m.Id, m.StudentId, m.SubjectId, m.MarksObtained))

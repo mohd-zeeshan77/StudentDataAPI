@@ -49,6 +49,13 @@ namespace WebAppStudent.Services
             }
             return null;
         }
+        public IEnumerable<TeacherDto> GetInActiveTeacher()
+        {
+            return _dbContext.Teachers
+                    .Where(t => !t.IsActive)
+                    .Select(t => new TeacherDto(t.Id, t.Name, t.IsActive))
+                    .ToList();
+        }
         public TeacherDto? CreateTeacher(CreateTeacherRequest request)
         {
             try

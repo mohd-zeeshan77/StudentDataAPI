@@ -13,21 +13,40 @@ namespace WebAppStudent.Controllers
         {
             _studentService = studentService ?? throw new ArgumentNullException(nameof(studentService));
         }
+
         [HttpGet]
         [Route("")]
         public IActionResult Get()
         {
             IEnumerable<StudentDto> students = _studentService.GetStudents();
 
-            return Ok(students);
+            return students is null ? Problem("Unable to find students. Check log for more info") : Ok(students);
         }
+
         [HttpGet]
         [Route("{Id:int}")]
         public IActionResult Get(int Id)
         {
             StudentDto? student = _studentService.GetStudent(Id);
-            return student is null ? NotFound() : Ok(student);
+            return student is null ? Problem("Unable to find student. Check log for more info") : Ok(student);
         }
+
+        [HttpGet]
+        [Route("inactive")]
+        public IActionResult GetInactive()
+        {
+            IEnumerable<StudentDto>student = _studentService.GetInActiveStudent();
+            return student is null ? Problem("Unable to find inactive student. Check log for more info") : Ok(student);
+        }
+
+        [HttpGet]
+        [Route("marks")]
+        public IActionResult GetStudentMarks()
+        {
+            IEnumerable<StudentMarksDto> std =_studentService.GetStudentMarks();
+            return std is null ? Problem("Unable to find inactive student. Check log for more info") : Ok(std);
+        }
+
         [HttpPost]
         [Route("")]
         public IActionResult Create([FromBody] CreateStudentRequest request)
@@ -39,6 +58,7 @@ namespace WebAppStudent.Controllers
             StudentDto? student = _studentService.CreateStudent(request);
             return student is null ? Problem("There was some problem. See log for more details.") : Ok(student);
         }
+
         [HttpPut]
         [Route("{Id:int}")]
         public IActionResult Update(int Id, [FromBody] CreateStudentRequest request)
@@ -50,6 +70,7 @@ namespace WebAppStudent.Controllers
             StudentDto? updated = _studentService.UpdateStudent(Id, request);
             return updated is null ? Problem("There was problem while updating .See logs for more detials.") : Ok(updated);
         }
+
         [HttpPatch]
         [Route("{Id:int}")]
         public IActionResult ActiveStatus(int Id, [FromBody] ActiveRequest request)
